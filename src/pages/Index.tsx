@@ -4,12 +4,27 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Navigation } from "@/components/Navigation";
 import { DailyChallenge } from "@/components/DailyChallenge";
 import { SocialFeed } from "@/components/SocialFeed";
+import { Auth } from "@/components/Auth";
+import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import heroImage from "@/assets/hero-bridge.jpg";
 import { Play, Star, Globe, Users, Trophy, Zap } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<"challenge" | "feed">("challenge");
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return <Auth />;
+  }
 
   return (
     <div className="min-h-screen bg-background">

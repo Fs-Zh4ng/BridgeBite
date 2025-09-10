@@ -2,57 +2,24 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Heart, MessageCircle, Share2, Trophy, Zap, Users } from "lucide-react";
-
-const feedItems = [
-  {
-    id: 1,
-    user: {
-      name: "Sarah Chen",
-      avatar: "SC",
-      level: "Culture Explorer"
-    },
-    action: "completed the Japanese greeting challenge",
-    points: 10,
-    streak: 12,
-    timeAgo: "2 hours ago",
-    flag: "🇯🇵",
-    likes: 24,
-    comments: 8
-  },
-  {
-    id: 2,
-    user: {
-      name: "Miguel Santos",
-      avatar: "MS",
-      level: "Bridge Builder"
-    },
-    action: "achieved a 30-day streak",
-    points: 100,
-    streak: 30,
-    timeAgo: "4 hours ago",
-    flag: "🏆",
-    likes: 89,
-    comments: 23
-  },
-  {
-    id: 3,
-    user: {
-      name: "Aisha Patel",
-      avatar: "AP",
-      level: "World Connector"
-    },
-    action: "mastered French cuisine challenge",
-    points: 25,
-    streak: 8,
-    timeAgo: "1 day ago",
-    flag: "🇫🇷",
-    likes: 42,
-    comments: 15
-  }
-];
+import { Heart, MessageCircle, Share2, Trophy, Zap, Users, Loader2 } from "lucide-react";
+import { useSocialFeed } from "@/hooks/useSocialFeed";
+import { formatDistanceToNow } from "date-fns";
 
 export const SocialFeed = () => {
+  const { feedPosts, loading, toggleLike } = useSocialFeed();
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto space-y-4">
+        <Card className="p-8">
+          <div className="flex items-center justify-center">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </div>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between mb-6">
@@ -63,52 +30,59 @@ export const SocialFeed = () => {
         </Button>
       </div>
 
-      {feedItems.map((item) => (
-        <Card key={item.id} className="bg-gradient-card border-0 shadow-card">
+      {feedPosts.map((post) => (
+        <Card key={post.id} className="bg-gradient-card border-0 shadow-card">
           <CardContent className="p-6">
             <div className="flex items-start gap-4">
               <Avatar className="h-12 w-12">
                 <AvatarImage src="" />
                 <AvatarFallback className="bg-bridge-start text-white font-semibold">
-                  {item.user.avatar}
+                  {post.profiles?.display_name?.[0]?.toUpperCase() || post.profiles?.username?.[0]?.toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
               
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="font-semibold">{item.user.name}</span>
+                  <span className="font-semibold">
+                    {post.profiles?.display_name || post.profiles?.username || "Anonymous"}
+                  </span>
                   <Badge variant="secondary" className="text-xs">
-                    {item.user.level}
+                    {post.profiles?.level || "Explorer"}
                   </Badge>
-                  <span className="text-2xl ml-auto">{item.flag}</span>
+                  <span className="text-2xl ml-auto">{post.flag}</span>
                 </div>
                 
                 <p className="text-muted-foreground mb-3">
-                  {item.action}
+                  {post.action_description}
                 </p>
                 
                 <div className="flex items-center gap-4 mb-4">
                   <div className="flex items-center gap-1">
                     <Trophy className="h-4 w-4 text-bridge-start" />
-                    <span className="text-sm font-medium">+{item.points} points</span>
+                    <span className="text-sm font-medium">+{post.points_earned} points</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <Zap className="h-4 w-4 text-bridge-accent" />
-                    <span className="text-sm font-medium">{item.streak} day streak</span>
+                    <span className="text-sm font-medium">{post.streak_count} day streak</span>
                   </div>
                   <span className="text-sm text-muted-foreground ml-auto">
-                    {item.timeAgo}
+                    {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
                   </span>
                 </div>
                 
                 <div className="flex items-center gap-6 pt-3 border-t border-border">
-                  <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-muted-foreground hover:text-foreground"
+                    onClick={() => toggleLike(post.id)}
+                  >
                     <Heart className="h-4 w-4 mr-1" />
-                    {item.likes}
+                    {post.post_likes?.length || 0}
                   </Button>
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                     <MessageCircle className="h-4 w-4 mr-1" />
-                    {item.comments}
+                    {post.post_comments?.length || 0}
                   </Button>
                   <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
                     <Share2 className="h-4 w-4 mr-1" />

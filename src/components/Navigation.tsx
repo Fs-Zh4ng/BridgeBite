@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Users, MapPin, Settings } from "lucide-react";
+import { Trophy, Users, MapPin, LogOut } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useChallenges } from "@/hooks/useChallenges";
 
 export const Navigation = () => {
-  const [currentPoints] = useState(285);
-  const [currentLevel] = useState("Bridge Builder");
+  const { user, signOut } = useAuth();
+  const { userProfile } = useChallenges();
 
   return (
     <nav className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
@@ -44,23 +46,23 @@ export const Navigation = () => {
             <div className="text-right hidden sm:block">
               <div className="flex items-center gap-2">
                 <Badge variant="secondary" className="text-xs">
-                  {currentLevel}
+                  {userProfile?.level || "Explorer"}
                 </Badge>
                 <span className="text-sm font-semibold text-bridge-start">
-                  {currentPoints} pts
+                  {userProfile?.total_points || 0} pts
                 </span>
               </div>
             </div>
             
             <Avatar className="h-8 w-8">
-              <AvatarImage src="" />
+              <AvatarImage src={userProfile?.avatar_url || ""} />
               <AvatarFallback className="bg-bridge-start text-white text-sm font-semibold">
-                YU
+                {userProfile?.display_name?.[0]?.toUpperCase() || userProfile?.username?.[0]?.toUpperCase() || "U"}
               </AvatarFallback>
             </Avatar>
             
-            <Button variant="ghost" size="sm" className="p-2">
-              <Settings className="h-4 w-4" />
+            <Button variant="ghost" size="sm" className="p-2" onClick={signOut}>
+              <LogOut className="h-4 w-4" />
             </Button>
           </div>
         </div>
