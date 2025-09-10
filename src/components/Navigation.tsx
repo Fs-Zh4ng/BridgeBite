@@ -5,17 +5,19 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, MapPin, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useChallenges } from "@/hooks/useChallenges";
+import { useNavigate, Link } from "react-router-dom";
 
 export const Navigation = () => {
   const { user, signOut } = useAuth();
   const { userProfile } = useChallenges();
+  const navigate = useNavigate();
 
   return (
     <nav className="bg-card/80 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-3">
+          <Link to="/" className="flex items-center space-x-3">
             <div className="bg-gradient-hero p-2 rounded-lg">
               <span className="text-white font-bold text-xl">🌉</span>
             </div>
@@ -23,7 +25,7 @@ export const Navigation = () => {
               <h1 className="text-xl font-bold text-foreground">BridgeBites</h1>
               <p className="text-xs text-muted-foreground">Cultural Exchange</p>
             </div>
-          </div>
+          </Link>
 
           {/* Navigation Items */}
           <div className="hidden md:flex items-center space-x-6">
@@ -31,10 +33,12 @@ export const Navigation = () => {
               <Trophy className="h-4 w-4 mr-2" />
               Challenges
             </Button>
-            <Button variant="ghost" size="sm">
-              <Users className="h-4 w-4 mr-2" />
-              Community
-            </Button>
+            <Link to="/friends">
+              <Button variant="ghost" size="sm">
+                <Users className="h-4 w-4 mr-2" />
+                Community
+              </Button>
+            </Link>
             <Button variant="ghost" size="sm">
               <MapPin className="h-4 w-4 mr-2" />
               Bridge Map
@@ -61,7 +65,15 @@ export const Navigation = () => {
               </AvatarFallback>
             </Avatar>
             
-            <Button variant="ghost" size="sm" className="p-2" onClick={signOut}>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="p-2"
+              onClick={async () => {
+                await signOut();
+                navigate('/');
+              }}
+            >
               <LogOut className="h-4 w-4" />
             </Button>
           </div>

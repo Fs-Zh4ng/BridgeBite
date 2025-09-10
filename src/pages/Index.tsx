@@ -9,6 +9,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Badge } from "@/components/ui/badge";
 import heroImage from "@/assets/hero-bridge.jpg";
 import { Play, Star, Globe, Users, Trophy, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState<"challenge" | "feed">("challenge");
@@ -56,10 +57,12 @@ const Index = () => {
               <Play className="mr-2 h-5 w-5" />
               Start Today's Challenge
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/10 border-white/30 text-white hover:bg-white/20">
-              <Users className="mr-2 h-5 w-5" />
-              Join Community
-            </Button>
+            <Link to="/friends" className="inline-block">
+              <Button variant="outline" size="lg" className="text-lg px-8 py-6 bg-white/10 border-white/30 text-white hover:bg-white/20">
+                <Users className="mr-2 h-5 w-5" />
+                Join Community
+              </Button>
+            </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">

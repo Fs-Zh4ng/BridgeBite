@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment files - ignore real envs but keep example
+.env
+.env.local
+.env.*.local
+.env.*
+!.env.example

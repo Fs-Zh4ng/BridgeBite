@@ -5,9 +5,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Heart, MessageCircle, Share2, Trophy, Zap, Users, Loader2 } from "lucide-react";
 import { useSocialFeed } from "@/hooks/useSocialFeed";
 import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
+import FriendSuggestions from "@/components/FriendSuggestions";
+import { Link } from "react-router-dom";
 
 export const SocialFeed = () => {
   const { feedPosts, loading, toggleLike } = useSocialFeed();
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   if (loading) {
     return (
@@ -24,11 +28,15 @@ export const SocialFeed = () => {
     <div className="max-w-2xl mx-auto space-y-4">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold">Community Feed</h2>
-        <Button variant="outline" size="sm">
-          <Users className="h-4 w-4 mr-2" />
-          Find Friends
-        </Button>
+        <Link to="/friends">
+          <Button variant="outline" size="sm">
+            <Users className="h-4 w-4 mr-2" />
+            Find Friends
+          </Button>
+        </Link>
       </div>
+
+      {showSuggestions && <FriendSuggestions onClose={() => setShowSuggestions(false)} />}
 
       {feedPosts.map((post) => (
         <Card key={post.id} className="bg-gradient-card border-0 shadow-card">
