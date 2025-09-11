@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "seed:challenges": "node --experimental-specifier-resolution=node ./scripts/seed-challenges.mjs",
     "lint": "eslint .",
     "preview": "vite preview"
   },
