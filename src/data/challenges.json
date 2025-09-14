@@ -1,0 +1,44 @@
+[  
+  {
+    "id": "ch-001",
+    "title": "Capital city of France",
+    "description": "What is the capital city of France?",
+    "country": "France",
+    "flag": "🇫🇷",
+    "difficulty": "easy",
+    "points": 10,
+    "type": "quiz",
+    "options": { "choices": ["Paris", "Lyon", "Marseille", "Nice"] },
+    "correct_answer": "Paris",
+    "is_daily": true,
+    "created_at": "2025-09-10T19:00:00Z"
+  },
+  {
+    "id": "ch-002",
+    "title": "Identify the landmark in Italy",
+    "description": "Name this famous leaning tower located in Italy.",
+    "country": "Italy",
+    "flag": "🇮🇹",
+    "difficulty": "easy",
+    "points": 12,
+    "type": "visual",
+    "options": { "media_url": "https://example.com/images/leaning_tower_pisa.jpg" },
+    "correct_answer": "Leaning Tower of Pisa",
+    "is_daily": false,
+    "created_at": "2025-09-10T19:00:10Z"
+  },
+  {
+    "id": "ch-003",
+    "title": "Traditional Japanese dish",
+    "description": "Which of these is a traditional Japanese dish?",
+    "country": "Japan",
+    "flag": "🇯🇵",
+    "difficulty": "easy",
+    "points": 14,
+    "type": "quiz",
+    "options": { "choices": ["Sushi", "Tacos", "Paella", "Borscht"] },
+    "correct_answer": "Sushi",
+    "is_daily": true,
+    "created_at": "2025-09-10T19:00:20Z"
+  }
+]

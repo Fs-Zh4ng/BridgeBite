@@ -42,7 +42,7 @@ export const useSocialFeed = () => {
       return;
     }
 
-    setFeedPosts(data as any || []);
+    setFeedPosts((data as Array<{ id: string; user_id: string; content: string; created_at: string; likes: number; is_liked: boolean; profile?: { display_name?: string; username?: string; avatar_url?: string } }>) || []);
   };
 
   const toggleLike = async (postId: string) => {

@@ -9,6 +9,7 @@ export interface FriendSuggestion {
   username?: string | null;
   avatar_url?: string | null;
   level?: string | null;
+  country?: string | null;
 }
 
 export const useFriends = () => {
@@ -16,9 +17,9 @@ export const useFriends = () => {
   const [suggestions, setSuggestions] = useState<FriendSuggestion[]>([]);
   const [loading, setLoading] = useState(true);
   const [requestingIds, setRequestingIds] = useState<Record<string, boolean>>({});
-  const [incomingRequests, setIncomingRequests] = useState<any[]>([]);
+  const [incomingRequests, setIncomingRequests] = useState<Array<{ id: string; user_id: string; friend_id: string; status: string; created_at: string; requester_profile?: { user_id: string; display_name?: string; username?: string; avatar_url?: string; country?: string } }>>([]);
   const [processingRequestIds, setProcessingRequestIds] = useState<Record<string, boolean>>({});
-  const [friends, setFriends] = useState<any[]>([]);
+  const [friends, setFriends] = useState<Array<{ friendship_id: string; user_id: string; friend_id: string; created_at: string; profile?: { user_id: string; display_name?: string; username?: string; avatar_url?: string; country?: string } }>>([]);
   const [loadingFriends, setLoadingFriends] = useState(false);
 
   const fetchSuggestions = async () => {
@@ -40,7 +41,7 @@ export const useFriends = () => {
     const excludedUserIds = new Set<string>();
     excludedUserIds.add(user.id);
 
-    (friendships || []).forEach((f: any) => {
+    (friendships || []).forEach((f: { user_id?: string; friend_id?: string }) => {
       if (f.user_id) excludedUserIds.add(f.user_id);
       if (f.friend_id) excludedUserIds.add(f.friend_id);
     });
@@ -48,7 +49,7 @@ export const useFriends = () => {
     // Fetch profiles excluding existing friends and self
     let query = supabase
       .from("profiles")
-      .select("id,user_id,display_name,username,avatar_url,level")
+      .select("id,user_id,display_name,username,avatar_url,level,country")
       .limit(30);
 
     if (excludedUserIds.size) {
@@ -56,7 +57,7 @@ export const useFriends = () => {
       // Use not with three args: column, operator, value
       query = supabase
         .from("profiles")
-        .select("id,user_id,display_name,username,avatar_url,level")
+        .select("id,user_id,display_name,username,avatar_url,level,country")
         .not("user_id", "in", `(${arr})`)
         .limit(30);
     }
@@ -69,7 +70,7 @@ export const useFriends = () => {
       return;
     }
 
-    setSuggestions((profiles as any) || []);
+    setSuggestions((profiles as FriendSuggestion[]) || []);
     setLoading(false);
   };
 
@@ -111,18 +112,18 @@ export const useFriends = () => {
         return;
       }
 
-      const requesterIds = (requests || []).map((r: any) => r.user_id);
-      let profiles: any[] = [];
+      const requesterIds = (requests || []).map((r: { user_id: string }) => r.user_id);
+      let profiles: Array<{ user_id: string; display_name?: string; username?: string; avatar_url?: string; level?: string; country?: string }> = [];
       if (requesterIds.length) {
         const { data: profs, error: pErr } = await supabase
           .from('profiles')
-          .select('user_id,display_name,username,avatar_url,level')
+          .select('user_id,display_name,username,avatar_url,level,country')
           .in('user_id', requesterIds);
         if (pErr) console.error('Error fetching requester profiles:', pErr);
         profiles = profs || [];
       }
 
-      const merged = (requests || []).map((r: any) => ({
+      const merged = (requests || []).map((r: { id: string; user_id: string; friend_id: string; status: string; created_at: string }) => ({
         ...r,
         requester_profile: profiles.find((p) => p.user_id === r.user_id) || null,
       }));
@@ -194,19 +195,19 @@ export const useFriends = () => {
         return;
       }
 
-      const friendUserIds = (rels || []).map((r: any) => (r.user_id === user.id ? r.friend_id : r.user_id));
+      const friendUserIds = (rels || []).map((r: { user_id: string; friend_id: string }) => (r.user_id === user.id ? r.friend_id : r.user_id));
 
-      let profiles: any[] = [];
+      let profiles: Array<{ user_id: string; display_name?: string; username?: string; avatar_url?: string; level?: string; country?: string }> = [];
       if (friendUserIds.length) {
         const { data: profs, error: pErr } = await supabase
           .from('profiles')
-          .select('user_id,display_name,username,avatar_url,level')
+          .select('user_id,display_name,username,avatar_url,level,country')
           .in('user_id', friendUserIds);
         if (pErr) console.error('Error fetching friend profiles:', pErr);
         profiles = profs || [];
       }
 
-      const merged = (rels || []).map((r: any) => ({
+      const merged = (rels || []).map((r: { id: string; user_id: string; friend_id: string; created_at: string }) => ({
         friendship_id: r.id,
         created_at: r.created_at,
         user_id: r.user_id,

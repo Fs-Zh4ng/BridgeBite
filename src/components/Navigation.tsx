@@ -6,6 +6,7 @@ import { Trophy, Users, MapPin, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useChallenges } from "@/hooks/useChallenges";
 import { useNavigate, Link } from "react-router-dom";
+import { getCountryByName } from "@/data/countries";
 
 export const Navigation = () => {
   const { user, signOut } = useAuth();
@@ -29,10 +30,12 @@ export const Navigation = () => {
 
           {/* Navigation Items */}
           <div className="hidden md:flex items-center space-x-6">
+            <Link to="/challenges">
             <Button variant="ghost" size="sm">
               <Trophy className="h-4 w-4 mr-2" />
               Challenges
             </Button>
+            </Link>
             <Link to="/friends">
               <Button variant="ghost" size="sm">
                 <Users className="h-4 w-4 mr-2" />
@@ -56,6 +59,16 @@ export const Navigation = () => {
                   {userProfile?.total_points || 0} pts
                 </span>
               </div>
+              {userProfile?.country && (
+                <div className="flex items-center gap-1 mt-1">
+                  <span className="text-xs text-muted-foreground">
+                    {getCountryByName(userProfile.country)?.flag || "🌍"}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {userProfile.country}
+                  </span>
+                </div>
+              )}
             </div>
             
             <Avatar className="h-8 w-8">

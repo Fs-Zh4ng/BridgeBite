@@ -166,6 +166,9 @@ function toast({ ...props }: Toast) {
 function useToast() {
   const [state, setState] = React.useState<State>(memoryState);
 
+  // Register a single listener for this component instance once on mount.
+  // Using an empty deps array prevents repeated registration on state changes
+  // which can cause React internal queueing errors.
   React.useEffect(() => {
     listeners.push(setState);
     return () => {
@@ -174,7 +177,7 @@ function useToast() {
         listeners.splice(index, 1);
       }
     };
-  }, [state]);
+  }, []);
 
   return {
     ...state,

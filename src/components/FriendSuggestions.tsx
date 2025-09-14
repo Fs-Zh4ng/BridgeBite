@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useFriends } from "@/hooks/useFriends";
+import { getCountryByName } from "@/data/countries";
 
 export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const { suggestions, loading, sendFriendRequest, requestingIds, incomingRequests, acceptRequest, declineRequest, processingRequestIds, friends, loadingFriends, removeFriend } = useFriends();
@@ -17,7 +18,7 @@ export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose 
         ) : (
           <div className="space-y-3">
             {friends.length === 0 && <div className="text-sm text-muted-foreground">You have no friends yet.</div>}
-            {friends.map((f: any) => (
+            {friends.map((f: { friendship_id: string; profile?: { display_name?: string; username?: string; avatar_url?: string; country?: string }; created_at: string }) => (
               <Card key={f.friendship_id} className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -28,7 +29,15 @@ export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose 
                   </Avatar>
                   <div>
                     <div className="font-semibold">{f.profile?.display_name || f.profile?.username || 'Unknown'}</div>
-                    <div className="text-sm text-muted-foreground">Friends since {new Date(f.created_at).toLocaleDateString()}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {f.profile?.country && (
+                        <span className="flex items-center gap-1">
+                          <span>{getCountryByName(f.profile.country)?.flag || "🌍"}</span>
+                          <span>{f.profile.country}</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Friends since {new Date(f.created_at).toLocaleDateString()}</div>
                   </div>
                 </div>
                 <div>
@@ -45,7 +54,7 @@ export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose 
         <div className="mb-6">
           <h4 className="text-md font-semibold mb-3">Incoming Requests</h4>
           <div className="space-y-3">
-            {incomingRequests.map((req: any) => (
+            {incomingRequests.map((req: { id: string; requester_profile?: { display_name?: string; username?: string; avatar_url?: string; country?: string }; created_at: string }) => (
               <Card key={req.id} className="p-3 flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Avatar className="h-10 w-10">
@@ -56,7 +65,15 @@ export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose 
                   </Avatar>
                   <div>
                     <div className="font-semibold">{req.requester_profile?.display_name || req.requester_profile?.username || 'Unknown'}</div>
-                    <div className="text-sm text-muted-foreground">Requested {new Date(req.created_at).toLocaleString()}</div>
+                    <div className="text-sm text-muted-foreground">
+                      {req.requester_profile?.country && (
+                        <span className="flex items-center gap-1">
+                          <span>{getCountryByName(req.requester_profile.country)?.flag || "🌍"}</span>
+                          <span>{req.requester_profile.country}</span>
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">Requested {new Date(req.created_at).toLocaleString()}</div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
@@ -93,7 +110,16 @@ export const FriendSuggestions: React.FC<{ onClose?: () => void }> = ({ onClose 
 
                 <div className="flex-1 ml-2">
                   <div className="font-semibold">{s.display_name || s.username || "Unnamed"}</div>
-                  <div className="text-sm text-muted-foreground">{s.level || "Explorer"}</div>
+                  <div className="text-sm text-muted-foreground">
+                    {s.country && (
+                      <span className="flex items-center gap-1">
+                        <span>{getCountryByName(s.country)?.flag || "🌍"}</span>
+                        <span>{s.country}</span>
+                      </span>
+                    )}
+                    {!s.country && <span>{s.level || "Explorer"}</span>}
+                  </div>
+                  {s.country && <div className="text-xs text-muted-foreground">{s.level || "Explorer"}</div>}
                 </div>
 
                 <div>

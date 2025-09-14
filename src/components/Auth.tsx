@@ -5,9 +5,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { countries } from "@/data/countries";
 
 export const Auth = () => {
   const [loading, setLoading] = useState(false);
@@ -15,6 +17,7 @@ export const Auth = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [username, setUsername] = useState("");
+  const [country, setCountry] = useState("");
   const [error, setError] = useState("");
   const { toast } = useToast();
 
@@ -35,6 +38,12 @@ export const Auth = () => {
       return;
     }
 
+    if (!country) {
+      setError("Please select your country");
+      setLoading(false);
+      return;
+    }
+
     try {
       const redirectUrl = `${window.location.origin}/`;
       
@@ -45,7 +54,8 @@ export const Auth = () => {
           emailRedirectTo: redirectUrl,
           data: {
             username,
-            display_name: username
+            display_name: username,
+            country
           }
         }
       });
@@ -162,6 +172,24 @@ export const Auth = () => {
                     onChange={(e) => setUsername(e.target.value)}
                     required
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="signup-country">Country</Label>
+                  <Select value={country} onValueChange={setCountry} required>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select your country" />
+                    </SelectTrigger>
+                    <SelectContent className="max-h-60">
+                      {countries.map((country) => (
+                        <SelectItem key={country.code} value={country.name}>
+                          <div className="flex items-center gap-2">
+                            <span>{country.flag}</span>
+                            <span>{country.name}</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
